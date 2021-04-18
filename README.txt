@@ -1,1 +1,1 @@
-Kelvin Jaramillo
+I use this repository to save the university projects I have made during my studies as BSc Mechanical Engineering
