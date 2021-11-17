@@ -1,14 +1,16 @@
 # first of all import the socket library
 import socket
 import threading
-from robot import RobotPositioner
+from robot3 import RobotPositionerThird
 
 
 def socketR(positioner):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     print("Socket successfully created")
     port = 12345
+
     s.bind(('127.0.0.1', port))
+    # s.bind(('130.89.75.170', port))
     print("socket binded to %s" % (port))
     print(s.family, s.type, s.proto)
     s.listen(5)
@@ -21,6 +23,7 @@ def socketR(positioner):
     while True:
         b = c.recv(1024)
         string = b.decode("utf-8")
+
         fstring = string.split(" ? ")
         for i in range(len(fstring)):
             spliting = fstring[i].split(" : ")
@@ -30,9 +33,13 @@ def socketR(positioner):
                 id = spliting[0]
                 if id in dic:
                     last = dic[id]
+
                     list = [float(x), float(y)]
                     if not list == last:
                         positioner.addPosition(last, list)
+                        dicCopy = dict(dic)
+                        dicCopy.pop(id)
+                        positioner.addObstacles(dicCopy)
                         dic[id] = list
                     else:
                         pass
@@ -42,7 +49,7 @@ def socketR(positioner):
     c.close()
 
 def program():
-    positioner = RobotPositioner()
+    positioner = RobotPositionerThird()
     x = threading.Thread(target=socketR, args=(positioner,))
     x.start()
     positioner.running()
